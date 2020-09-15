@@ -1,0 +1,31 @@
+#cloud-config
+package_update: true
+write_files:
+  - owner: buildagent:buildagent
+    path: /etc/systemd/system/azure-devops-build-agent.service
+    content: |
+      [Unit]
+      Description=asdasd
+
+      [Service]
+      ExecStart=/opt/buildagent/run.sh
+      Type=simple
+      RemainAfterExit=no
+      Restart=on-failure
+      User=buildagent
+
+      [Install]
+      WantedBy=multi-user.target
+runcmd:
+  - BUILD_AGENT_VERSION=2.174.1
+  - ORG=https://dev.azure.com/myorg
+  - PAT_TOKEN=abcdefghijklmnopqrstuvwxyz
+  - mkdir /opt/buildagent
+  - cd /opt/buildagent
+  - wget https://vstsagentpackage.azureedge.net/agnet/$BUILD_AGENT_VERSION/vsts-agent-linux-x64-$BUILD_AGENT_VERSION.tar.gz
+  - tar zxvf vsts-agent-linux-x64-$BUILD_AGENT_VERSION.tar.gz
+  - chown -R buildagent:buildagent /opt/buildagent
+  - su -c "./config.sh --unattended --url $ORG --auth pat --token $PAT_TOKEN" -s /bin/sh buildagent
+  - systemctl daemon-reload
+  - systemctl start azure-devops-build-agent
+final_message: "done!"
