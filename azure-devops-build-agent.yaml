@@ -5,7 +5,7 @@ write_files:
     path: /etc/systemd/system/azure-devops-build-agent.service
     content: |
       [Unit]
-      Description=asdasd
+      Description=A unit file for running the Azure DevOps Build Agent application
 
       [Service]
       ExecStart=/opt/buildagent/run.sh
